@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberBot Hacker Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Inconsolata', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            user-select: none;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Matrix rain background */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        /* Terminal container */
+        #terminal-container {
+            width: 90vw;
+            max-width: 800px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        #terminal {
+            width: 100%;
+            background: #000;
+            border: 2px solid #0f0;
+            padding: 25px;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px #0f0, 0 0 30px #0f0, inset 0 0 50px rgba(0, 255, 0, 0.1);
+            position: relative;
+            font-size: 16px;
+            line-height: 1.4;
+            letter-spacing: 1.1px;
+            min-height: 400px;
+            max-height: 60vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 5px;
+        }
+
+        /* Custom scrollbar */
+        #terminal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #terminal::-webkit-scrollbar-track {
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        #terminal::-webkit-scrollbar-thumb {
+            background: #0f0;
+            border-radius: 4px;
+            box-shadow: 0 0 5px #0f0;
+        }
+
+        /* Terminal content */
+        .line {
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 20px #0f0;
+            margin-bottom: 10px;
+            animation: flicker 3s infinite;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            20% { opacity: 0.8; }
+            40% { opacity: 1; }
+            60% { opacity: 0.9; }
+            80% { opacity: 1; }
+        }
+
+        .cursor {
+            display: inline-block;
+            background-color: #0f0;
+            width: 10px;
+            height: 20px;
+            vertical-align: bottom;
+            margin-left: 5px;
+            animation: blink 1s step-start infinite;
+            box-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Terminal scan lines effect */
+        #terminal::before {
+            content: '';
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(0, 255, 0, 0.03),
+                rgba(0, 255, 0, 0.03) 1px,
+                transparent 2px,
+                transparent 3px
+            );
+            z-index: 5;
+        }
+
+        /* Buttons */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        button {
+            background: transparent;
+            border: 2px solid #0f0;
+            color: #0f0;
+            font-family: 'Inconsolata', monospace;
+            font-size: 1rem;
+            padding: 0.6rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.4), transparent);
+            transition: left 0.5s;
+            z-index: -1;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover, button:focus {
+            background-color: rgba(0, 255, 0, 0.1);
+            color: #0f0;
+            outline: none;
+            box-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            #terminal {
+                padding: 15px;
+                font-size: 14px;
+            }
+            
+            button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .button-container {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+    
+ 
+    <div id="terminal-container">
+        <div id="terminal">
+        
+        </div>
+    </div>
+    
+
+    <div class="button-container">
+        <button id="backHomeBtn">Back to Home</button>
+        <button id="nextBtn">Next</button>
+    </div>
+
+    <script>
+        // Matrix rain background
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas to full window size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Matrix characters
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
+        const charArray = chars.split("");
+        
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        
+        // Array of drops - one per column
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+        
+        // Drawing the characters
+        function drawMatrix() {
+            // Black background for the canvas with opacity for trails
+            ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "#0F0"; // Green text
+            ctx.font = fontSize + "px arial";
+            
+            // Loop over drops
+            for (let i = 0; i < drops.length; i++) {
+                // Random character to print
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                
+
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+              
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                
+
+                drops[i]++;
+            }
+        }
+        
+ 
+        const lines = [
+            "CyberBot — your ultimate digital sentinel.",
+            "It decodes cyber mysteries, spots sketchy URLs, exposes fake images,",
+            "and instantly audits password and breach strength.",
+            "No fluff, just raw cyber intel",
+            "designed to keep you safe in the wild digital jungle.",
+            "",
+            "Level up with CyberBot's interactive mini-games — test your hacking skills",
+            "and sharpen your instincts directly in the terminal.",
+            "Its not just a tool; its a cyber playground for the curious and the bold.",
+            "",
+            "Armed with cutting-edge detection algorithms, CyberBot hunts down malware traps,",
+            "AI-generated fakes, and weak security links before they get close.",
+            "Commands are slick, intuitive, and built for both rookies and seasoned hackers alike.",
+            "",
+            "Always plugged into the latest cyber threats and defense tactics,",
+            "CyberBot keeps you one step ahead — a relentless guardian in the shadows of the net.",
+            "Learn, play, and dominate your digital domain with confidence."
+        ];
+
+        const terminal = document.getElementById('terminal');
+        let lineIndex = 0;
+        let typingSpeed = 30;
+        let isTyping = false;
+
+        // Create cursor
+        const cursor = document.createElement('span');
+        cursor.classList.add('cursor');
+        terminal.appendChild(cursor);
+
+        // Type a single line
+        function typeLine(line, callback) {
+            isTyping = true;
+            let i = 0;
+            const p = document.createElement('p');
+            p.classList.add('line');
+            terminal.insertBefore(p, cursor);
+
+            function typeChar() {
+                if (i < line.length) {
+                    p.textContent += line[i];
+                    i++;
+            
+                    setTimeout(typeChar, typingSpeed + Math.random() * 50);
+                } else {
+                  
+                    setTimeout(() => {
+                        isTyping = false;
+                        callback();
+                    }, 200 + Math.random() * 300);
+                }
+            }
+            typeChar();
+        }
+
+
+        function nextLine() {
+            if (lineIndex < lines.length) {
+                typeLine(lines[lineIndex], () => {
+                    lineIndex++;
+                    nextLine();
+                });
+            }
+        }
+
+
+        document.getElementById('backHomeBtn').addEventListener('click', function() {
+    window.location.href = '/';
+});
+
+
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            window.location.href = 'login.html';
+        });
+
+        // Initialize everything when page loads
+        window.addEventListener('load', function() {
+            // Start matrix animation
+            setInterval(drawMatrix, 35);
+            
+            // Start terminal typing after a brief delay
+            setTimeout(() => {
+                nextLine();
+            }, 1000);
+        });
+
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

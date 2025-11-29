@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CyberBot Hacker Terminal</title>
+  <h1 class="cyber-heading"> C Y B E R B 0 T </h1>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
+
+    .cyber-heading {
+      font-family: 'Inconsolata', monospace;
+      color: #0f0;
+      font-size: 3rem;
+      letter-spacing: 0.3em;
+      text-align: center;
+      text-shadow:
+        0 0 5px #0f0,
+        0 0 10px #0f0,
+        0 0 20px #0f0,
+        0 0 40px #00ff00,
+        0 0 80px #00ff00;
+      animation: flicker 2s infinite alternate;
+      user-select: none;
+    }
+
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+        text-shadow:
+          0 0 5px #0f0,
+          0 0 10px #0f0,
+          0 0 20px #0f0,
+          0 0 40px #00ff00,
+          0 0 80px #00ff00;
+      }
+      20%, 22%, 24%, 55% {
+        opacity: 0.7;
+        text-shadow:
+          0 0 3px #0f0,
+          0 0 7px #0f0,
+          0 0 14px #0f0;
+      }
+    }
+
+    body {
+      margin: 0;
+      background: #000;
+      font-family: 'Inconsolata', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #0f0;
+      overflow-x: hidden;
+      user-select: none;
+      background-image: linear-gradient(to right, rgba(0,255,0,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(0,255,0,0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    #terminal {
+      background: #000;
+      border: 2px solid #0f0;
+      box-shadow: 0 0 10px #0f0, inset 0 0 40px #0f0;
+      padding: 20px;
+      width: 90vw;
+      max-width: 700px;
+      font-size: 16px;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    .button-container {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    button {
+      background: transparent;
+      border: 2px solid #0f0;
+      color: #0f0;
+      font-family: 'Inconsolata', monospace;
+      font-size: 1rem;
+      padding: 0.5rem 1.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0f0;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #0f0;
+      color: #000;
+    }
+
+    /* ---------- MODAL ---------- */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #000;
+      border: 2px solid #0f0;
+      box-shadow: 0 0 20px #0f0, inset 0 0 40px #0f0;
+      padding: 2rem;
+      width: 300px;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .modal-content h2 {
+      color: #0f0;
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      background: transparent;
+      border: 1px solid #0f0;
+      color: #0f0;
+      font-family: monospace;
+      font-size: 1rem;
+    }
+
+    .modal-content input:focus {
+      outline: none;
+      box-shadow: 0 0 10px #0f0;
+    }
+
+    .modal-content .eye-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #0f0;
+      user-select: none;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: #0f0;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    label {
+      font-size: 0.9rem;
+      display: block;
+      margin-top: 1rem;
+    }
+
+    label input[type="checkbox"] {
+      margin-right: 6px;
+      accent-color: #0f0;
+    }
+
+    a {
+      color: #0f0;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* Forget password button styling */
+    .forget-password {
+      margin-top: 1rem;
+      background: transparent;
+      border: none;
+      color: #0f0;
+      font-family: 'Inconsolata', monospace;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: underline;
+    }
+    .forget-password:hover {
+      color: #0a0;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="terminal">
+    <p>[!] Authentication protocol triggered...</p>
+    <p>[+] Provide identification parameters:</p>
+  </div>
+
+  <div class="button-container">
+    <button onclick="openModal('signin')">>> ACCESS TERMINAL</button>
+    <button onclick="openModal('signup')">>> NEW AGENT REGISTRATION</button>
+  </div>
+
+  <div id="signinModal" class="modal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeModal('signinModal')">✕</button>
+      <h2>Sign In</h2>
+      <input type="text" id="signinName" placeholder="Username" />
+
+      <div style="position: relative;">
+        <input type="password" id="signinPassword" placeholder="Password" />
+        <span class="eye-toggle" onclick="togglePassword('signinPassword')">👁</span>
+      </div>
+
+      <button onclick="submitSignin()">ACCESS GRANTED</button>
+       <button class="forget-password" onclick="window.location.href='email.html'">RECOVER ACCESS?</button>
+    </div>
+  </div>
+
+  <div id="signupModal" class="modal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeModal('signupModal')">✕</button>
+      <h2>Sign Up</h2>
+      <input type="email" id="signupEmail" placeholder="Email Address" />
+      <input type="text" id="signupName" placeholder="Full Name" />
+      <div style="position: relative;">
+        <input type="password" id="signupPassword" placeholder="Password" />
+        <span class="eye-toggle" onclick="togglePassword('signupPassword')">👁</span>
+      </div>
+      <div style="position: relative;">
+        <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" />
+        <span class="eye-toggle" onclick="togglePassword('signupConfirmPassword')">👁</span>
+      </div>
+      <label>
+        <input type="checkbox" id="signupTerms" />
+        I agree to the <a href="#">Terms & Conditions</a>
+      </label>
+      <button id="agentEnrollBtn" style="margin-top: 1.5rem; width: 100%;" onclick="submitSignup()">>> AGENT ENROLLMENT</button>
+
+
+
+    </div>
+  </div>
+
+  <script>
+    function openModal(type) {
+      document.getElementById(type + 'Modal').classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function togglePassword(inputId) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function submitSignup() {
+      const email = document.getElementById('signupEmail').value.trim();
+      const name = document.getElementById('signupName').value.trim();
+      const pass = document.getElementById('signupPassword').value;
+      const confirm = document.getElementById('signupConfirmPassword').value;
+      const agreed = document.getElementById('signupTerms').checked;
+
+      if (!email || !name || !pass || !confirm) {
+        alert("⚠ Fill in all fields.");
+        return;
+      }
+
+      if (pass !== confirm) {
+        alert("Passwords do not match.");
+        return;
+      }
+
+      if (!agreed) {
+        alert("You must accept the Terms & Conditions.");
+        return;
+      }
+
+
+      localStorage.setItem('signupEmail', email);
+      localStorage.setItem('signupName', name);
+      localStorage.setItem('signupPassword', pass);
+
+      alert(`Welcome, ${name}! Your account has been created.`);
+      closeModal('signupModal');
+      openModal('signin');  
+    }
+
+    function submitSignin() {
+      const inputName = document.getElementById('signinName').value.trim();
+      const inputPass = document.getElementById('signinPassword').value;
+
+      if (!inputName || !inputPass) {
+        alert("⚠ Please enter both username and password.");
+        return;
+      }
+
+      const savedName = localStorage.getItem('signupName');
+      const savedPass = localStorage.getItem('signupPassword');
+
+      if (inputName === savedName && inputPass === savedPass) {
+        alert(`Welcome back, ${inputName}!`);
+        closeModal('signinModal');
+        window.location.href = 'cyberbot.html';  
+      } else {
+        alert("Invalid username or password.");
+      }
+    }
+
+    function forgotPassword() {
+      alert("Password reset functionality coming soon. Stay tuned.");
+      window.location.href = 'email.html';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal('signinModal');
+        closeModal('signupModal');
+      }
+    });
+  </script>
+</body>
+</html>

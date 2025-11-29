@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fake / Real Image Predictor</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Courier New', monospace; }
+body { background:#0a0a0a; color:#00ff00; padding:20px; min-height:100vh; }
+.container { max-width:900px; margin:0 auto; }
+h1 { text-align:center; margin-bottom:20px; text-shadow:0 0 10px #00ff00; }
+.panel { padding:20px; border:1px solid #00aa00; background:rgba(0,20,0,0.3); margin-bottom:20px; }
+label { display:block; margin-bottom:10px; }
+input[type="file"] { padding:12px; width:100%; background:#001100; color:#00ff00; border:1px solid #008800; }
+button { width:100%; padding:15px; background:#003300; color:#00ff00; border:1px solid #00aa00; cursor:pointer; font-size:16px; }
+button:hover { background:#005500; }
+#uploadedImage { max-width:100%; border:1px solid #00ff00; margin-top:20px; }
+.results { display:none; padding:15px; margin-top:20px; background:rgba(0,10,0,0.5); border:1px solid #004400; }
+.safe { background: rgba(0,100,0,0.3) !important; border-left:5px solid #00ff00; }
+.danger { background: rgba(100,0,0,0.3) !important; border-left:5px solid red; }
+#loading { margin-top:20px; display:none; }
+#scannerBar { height:3px; width:0%; background:#00ff00; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>FAKE / REAL IMAGE PREDICTOR</h1>
+
+<div class="panel">
+<label>Select an image</label>
+<input type="file" id="imageInput" accept="image/*">
+<button id="scanBtn">SCAN IMAGE</button>
+</div>
+
+<h3>Uploaded Image Preview</h3>
+<img id="uploadedImage">
+
+<div id="loading">
+<p>🔍 Scanning Image...</p>
+<div style="background:#003300; width:100%; height:3px;">
+<div id="scannerBar"></div>
+</div>
+</div>
+
+<div class="results" id="resultsBox">
+<p><strong>Prediction:</strong> <span id="predLabel"></span></p>
+<p><strong>Confidence:</strong> <span id="predConf"></span></p>
+<p><strong>Record ID:</strong> <span id="predId"></span></p>
+</div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("scanBtn").addEventListener("click", scanImage);
+});
+
+function scanImage() {
+    const input = document.getElementById('imageInput');
+    const file = input.files[0];
+    if(!file){ alert("Please select an image!"); return; }
+
+    document.getElementById("uploadedImage").src = URL.createObjectURL(file);
+    document.getElementById("loading").style.display = "block";
+
+    let bar = document.getElementById("scannerBar");
+    let width = 0;
+    let scanInterval = setInterval(()=>{
+        if(width>=100){ clearInterval(scanInterval); }
+        else{ width+=2; bar.style.width = width+"%"; }
+    }, 30);
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    fetch("/predict_api/", {
+        method:"POST",
+        body:formData
+    })
+    .then(async res=>{
+        let data=null;
+        try{ data = await res.json(); } catch(e){}
+
+        if(!res.ok){
+            alert("Server Error: "+JSON.stringify(data));
+            console.log("SERVER RESPONSE:", data);
+            document.getElementById("loading").style.display="none";
+            return;
+        }
+
+        document.getElementById("loading").style.display="none";
+        let box=document.getElementById("resultsBox");
+        box.style.display="block";
+
+        document.getElementById("predLabel").innerText = data.label;
+        document.getElementById("predConf").innerText = data.confidence;
+        document.getElementById("predId").innerText = data.id;
+
+        box.className = (data.label.toUpperCase()==="REAL") ? "results safe":"results danger";
+    })
+    .catch(err=>{
+        alert("Fetch Error: "+err);
+        console.log("FETCH ERROR:",err);
+        document.getElementById("loading").style.display="none";
+    });
+}
+</script>
+</body>
+</html>

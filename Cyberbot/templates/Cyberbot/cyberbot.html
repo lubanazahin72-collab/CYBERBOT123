@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Security Hub | Rotating Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #001900 100%);
+            color: #00ff00;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 255, 0, 0.04) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rotating-circle {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            border: 2px dashed rgba(0, 255, 0, 0.3);
+            animation: rotate 30s linear infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .circle-center {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 30, 0, 0.8);
+            border-radius: 50%;
+            border: 2px solid #00ff00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .center-text {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .module {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 20, 0, 0.8);
+            border: 2px solid #00ff00;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .module:hover {
+            transform: scale(1.1);
+            background: rgba(0, 40, 0, 0.9);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.7);
+            z-index: 5;
+        }
+
+        .module-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #00ff00;
+        }
+
+        .module-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .module-desc {
+            font-size: 9px;
+            color: #88ff88;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .module:hover .module-desc {
+            display: block;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+        }
+
+        .control-btn {
+            background: rgba(0, 30, 0, 0.8);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 50, 0, 0.9);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        .status-bar {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 20, 0, 0.8);
+            padding: 10px 20px;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            font-size: 14px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-light {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .terminal-output {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 10, 0, 0.9);
+            border: 1px solid #00ff00;
+            padding: 15px;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 5px;
+            font-size: 12px;
+            line-height: 1.4;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .terminal-line {
+            margin-bottom: 5px;
+        }
+
+        .prompt {
+            color: #00ff00;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Connection lines */
+        .connection {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .line {
+            position: absolute;
+            background: rgba(0, 255, 0, 0.2);
+            height: 2px;
+            transform-origin: 0 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    
+    <div class="container">
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-light"></div>
+                <span>SYSTEM: ONLINE</span>
+            </div>
+            <div class="status-item">
+                <div class="status-light"></div>
+                <span>ROTATION: ACTIVE</span>
+            </div>
+            <div class="status-item">
+                <div class="status-light"></div>
+                <span>MODULES: 4/4</span>
+            </div>
+        </div>
+
+        <div class="terminal-output" id="terminal">
+            <div class="terminal-line"><span class="prompt">></span> Cyber Security Hub initialized</div>
+            <div class="terminal-line"><span class="prompt">></span> Rotating dashboard activated</div>
+            <div class="terminal-line"><span class="prompt">></span> All security modules loaded successfully</div>
+            <div class="terminal-line"><span class="prompt">></span> Ready for user interaction<span class="blink">_</span></div>
+        </div>
+
+        <div class="rotating-circle" id="circle">
+            <div class="circle-center">
+                <div class="center-text">CYBER<br>SECURITY<br>HUB</div>
+            </div>
+            
+            <!-- FAKE Image Detector Module -->
+            <div class="module" style="transform: rotate(0deg) translate(250px) rotate(-0deg);" onclick="activateModule(1)">
+                <div class="module-icon">🖼</div>
+                <div class="module-title">FAKE IMAGE DETECTOR</div>
+                <div class="module-desc">AI-powered image analysis</div>
+            </div>
+            
+            <!-- Password/URL Security Module -->
+            <div class="module" style="transform: rotate(90deg) translate(250px) rotate(-90deg);" onclick="activateModule(2)">
+                <div class="module-icon"></div>
+                <div class="module-title">PASSWORD/URL SECURITY</div>
+                <div class="module-desc">Breach checking & threat analysis</div>
+            </div>
+            
+            <!-- Cyber Q&A Module -->
+            <div class="module" style="transform: rotate(180deg) translate(250px) rotate(-180deg);" onclick="activateModule(3)">
+                <div class="module-icon"></div>
+                <div class="module-title">CYBER Q&A</div>
+                <div class="module-desc">Expert knowledge base</div>
+            </div>
+            
+            <!-- Get Plus Module -->
+            <div class="module" style="transform: rotate(270deg) translate(250px) rotate(-270deg);" onclick="activateModule(4)">
+                <div class="module-icon">⭐</div>
+                <div class="module-title">GET PLUS</div>
+                <div class="module-desc">Premium features</div>
+            </div>
+
+            <div class="connection">
+                <div class="line" id="line1" style="width: 250px; top: 250px; left: 250px; transform: rotate(0deg);"></div>
+                <div class="line" id="line2" style="width: 250px; top: 250px; left: 250px; transform: rotate(90deg);"></div>
+                <div class="line" id="line3" style="width: 250px; top: 250px; left: 250px; transform: rotate(180deg);"></div>
+                <div class="line" id="line4" style="width: 250px; top: 250px; left: 250px; transform: rotate(270deg);"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" id="pauseBtn" onclick="toggleRotation()">PAUSE ROTATION</button>
+            <button class="control-btn" onclick="changeSpeed('faster')">FASTER</button>
+            <button class="control-btn" onclick="changeSpeed('slower')">SLOWER</button>
+            <button class="control-btn" onclick="resetRotation()">RESET</button>
+        </div>
+    </div>
+
+    <script>
+        const circle = document.getElementById('circle');
+        const terminal = document.getElementById('terminal');
+        const pauseBtn = document.getElementById('pauseBtn');
+        let isRotating = true;
+        let rotationSpeed = 30;
+
+        function activateModule(moduleNumber) {
+            const messages = [
+                "",
+                "FAKE IMAGE DETECTOR activated - AI analysis ready",
+                "PASSWORD/URL SECURITY initializing - Opening chatbot interface",
+                "CYBER Q&A database accessed - Loading knowledge base",
+                "PREMIUM features portal - Upgrade options available"
+            ];
+            
+            addTerminalLine("Module " + moduleNumber + " activated: " + messages[moduleNumber]);
+            
+            // For module 2 (Password/URL Security), redirect to chatbot page
+            if (moduleNumber === 2) {
+                setTimeout(() => {
+                    addTerminalLine("Redirecting to security chatbot interface...");
+                    // Redirect to chatbot.html
+                    window.location.href = "chatbot.html";
+                }, 1500);
+            }
+
+             if (moduleNumber === 1) {
+                setTimeout(() => {
+                    addTerminalLine("Redirecting to security chatbot interface...");
+            
+                  window.location.href = "/cyber/fakerealimage";
+
+                }, 1500);
+            }
+        }
+
+        function addTerminalLine(text) {
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            line.innerHTML = '<span class="prompt">></span> ' + text;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function toggleRotation() {
+            if (isRotating) {
+                circle.style.animationPlayState = 'paused';
+                pauseBtn.textContent = 'RESUME ROTATION';
+                addTerminalLine("Rotation paused");
+            } else {
+                circle.style.animationPlayState = 'running';
+                pauseBtn.textContent = 'PAUSE ROTATION';
+                addTerminalLine("Rotation resumed");
+            }
+            isRotating = !isRotating;
+        }
+
+        function changeSpeed(direction) {
+            if (direction === 'faster' && rotationSpeed > 5) {
+                rotationSpeed -= 5;
+            } else if (direction === 'slower' && rotationSpeed < 60) {
+                rotationSpeed += 5;
+            }
+            
+            circle.style.animationDuration = rotationSpeed + 's';
+            addTerminalLine("Rotation speed set to " + rotationSpeed + "s per revolution");
+        }
+
+        function resetRotation() {
+            circle.style.animation = 'none';
+            setTimeout(() => {
+                circle.style.animation = 'rotate ' + rotationSpeed + 's linear infinite';
+                circle.style.animationPlayState = isRotating ? 'running' : 'paused';
+            }, 10);
+            addTerminalLine("Rotation reset to initial position");
+        }
+
+
+        setInterval(() => {
+            const lines = document.querySelectorAll('.line');
+            lines.forEach(line => {
+                line.style.background = 'rgba(0, 255, 0, ' + (0.2 + Math.random() * 0.3) + ')';
+            });
+        }, 1000);
+
+
+        setTimeout(() => {
+            addTerminalLine("Hover over modules for details, click to activate");
+        }, 2000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Security Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-bottom: 1px solid #00ff00;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px #00ff00;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #00cc00;
+            font-size: 1.2rem;
+        }
+
+        .scanning-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff00, transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background-color: rgba(0, 20, 0, 0.3);
+            border: 1px solid #00aa00;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .panel:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        h2 {
+            color: #00ff00;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 1px solid #008800;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00cc00;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background-color: #001100;
+            border: 1px solid #008800;
+            border-radius: 3px;
+            color: #00ff00;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        button {
+            background-color: #003300;
+            color: #00ff00;
+            border: 1px solid #00aa00;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #005500;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(0, 10, 0, 0.5);
+            border-radius: 3px;
+            min-height: 100px;
+            border: 1px solid #004400;
+        }
+
+        .status {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .safe {
+            background-color: rgba(0, 100, 0, 0.3);
+            border-left: 5px solid #00ff00;
+            color: #00ff00;
+        }
+
+        .warning {
+            background-color: rgba(100, 100, 0, 0.3);
+            border-left: 5px solid #ffff00;
+            color: #ffff00;
+        }
+
+        .danger {
+            background-color: rgba(100, 0, 0, 0.3);
+            border-left: 5px solid #ff0000;
+            color: #ff0000;
+        }
+
+        .loading {
+            color: #ffff00;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .terminal {
+            background-color: #001100;
+            border: 1px solid #008800;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 30px;
+            min-height: 150px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .terminal-line {
+            margin-bottom: 5px;
+        }
+
+        .prompt {
+            color: #00ff00;
+        }
+
+        .log-time {
+            color: #00aa00;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            border-top: 1px solid #00ff00;
+            color: #008800;
+            font-size: 0.9rem;
+        }
+
+        .glitch {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(42px, 9999px, 44px, 0); }
+            5% { clip: rect(12px, 9999px, 59px, 0); }
+            10% { clip: rect(48px, 9999px, 29px, 0); }
+            15% { clip: rect(42px, 9999px, 73px, 0); }
+            20% { clip: rect(63px, 9999px, 27px, 0); }
+            25% { clip: rect(34px, 9999px, 55px, 0); }
+            30% { clip: rect(86px, 9999px, 73px, 0); }
+            35% { clip: rect(20px, 9999px, 20px, 0); }
+            40% { clip: rect(26px, 9999px, 60px, 0); }
+            45% { clip: rect(25px, 9999px, 66px, 0); }
+            50% { clip: rect(57px, 9999px, 98px, 0); }
+            55% { clip: rect(5px, 9999px, 46px, 0); }
+            60% { clip: rect(82px, 9999px, 31px, 0); }
+            65% { clip: rect(54px, 9999px, 27px, 0); }
+            70% { clip: rect(28px, 9999px, 99px, 0); }
+            75% { clip: rect(45px, 9999px, 69px, 0); }
+            80% { clip: rect(23px, 9999px, 85px, 0); }
+            85% { clip: rect(54px, 9999px, 84px, 0); }
+            90% { clip: rect(45px, 9999px, 47px, 0); }
+            95% { clip: rect(37px, 9999px, 20px, 0); }
+            100% { clip: rect(73px, 9999px, 99px, 0); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            5% { clip: rect(52px, 9999px, 74px, 0); }
+            10% { clip: rect(79px, 9999px, 85px, 0); }
+            15% { clip: rect(75px, 9999px, 5px, 0); }
+            20% { clip: rect(67px, 9999px, 61px, 0); }
+            25% { clip: rect(14px, 9999px, 79px, 0); }
+            30% { clip: rect(1px, 9999px, 66px, 0); }
+            35% { clip: rect(86px, 9999px, 30px, 0); }
+            40% { clip: rect(23px, 9999px, 98px, 0); }
+            45% { clip: rect(85px, 9999px, 72px, 0); }
+            50% { clip: rect(71px, 9999px, 75px, 0); }
+            55% { clip: rect(2px, 9999px, 48px, 0); }
+            60% { clip: rect(30px, 9999px, 16px, 0); }
+            65% { clip: rect(59px, 9999px, 50px, 0); }
+            70% { clip: rect(41px, 9999px, 62px, 0); }
+            75% { clip: rect(2px, 9999px, 82px, 0); }
+            80% { clip: rect(47px, 9999px, 73px, 0); }
+            85% { clip: rect(3px, 9999px, 27px, 0); }
+            90% { clip: rect(26px, 9999px, 55px, 0); }
+            95% { clip: rect(42px, 9999px, 97px, 0); }
+            100% { clip: rect(38px, 9999px, 49px, 0); }
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .api-key-input {
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .api-key-input input {
+            font-size: 0.9rem;
+            padding: 8px;
+        }
+
+        .info-text {
+            font-size: 0.8rem;
+            color: #008800;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+
+    <div class="container">
+        <header>
+            <div class="scanning-line"></div>
+            <h1 class="glitch" data-text="SECURITY SCANNER v2.0">SECURITY SCANNER v2.0</h1>
+
+        </header>
+
+        <div class="dashboard">
+            <div class="panel">
+                <h2>PASSWORD BREACH CHECK</h2>
+                <div class="input-group">
+                    <label for="password">Enter Password to Check:</label>
+                    <input type="password" id="password" placeholder="Enter password to check against breaches">
+                </div>
+
+                <button id="checkPassword">CHECK PASSWORD</button>
+                <div class="results" id="passwordResults">
+                    <div class="loading" id="passwordLoading" style="display: none;">Scanning HIBP database...</div>
+                    <div id="passwordStatus"></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>URL SAFETY CHECK</h2>
+                <div class="input-group">
+                    <label for="url">Enter URL to Check:</label>
+                    <input type="text" id="url" placeholder="https://example.com">
+                </div>
+
+                <button id="checkUrl">CHECK URL SAFETY</button>
+                <div class="results" id="urlResults">
+                    <div class="loading" id="urlLoading" style="display: none;">Querying Google Safe Browsing API...</div>
+                    <div id="urlStatus"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="terminal">
+            <h2>SYSTEM LOG</h2>
+            <div id="terminalOutput">
+                <div class="terminal-line"><span class="log-time">[12:00:00]</span> <span class="prompt">></span> System initialized</div>
+                <div class="terminal-line"><span class="log-time">[12:00:01]</span> <span class="prompt">></span> Security protocols engaged</div>
+
+            </div>
+        </div>
+
+        <footer>
+            <p>SECURITY SCANNER v2.0</p>
+        </footer>
+    </div>
+  <script>
+function addLog(message) {
+  const time = new Date().toLocaleTimeString();
+  const terminalOutput = document.getElementById('terminalOutput');
+  const logLine = document.createElement('div');
+  logLine.className = 'terminal-line';
+  logLine.innerHTML = `<span class="log-time">[${time}]</span> <span class="prompt">></span> ${message}`;
+  terminalOutput.appendChild(logLine);
+  terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}
+
+function showStatus(elementId, message, type = 'safe') {
+  const el = document.getElementById(elementId);
+  el.className = 'status'; // Reset
+  if (type === 'safe') el.classList.add('safe');
+  else if (type === 'warning') el.classList.add('warning');
+  else if (type === 'danger') el.classList.add('danger');
+  el.innerHTML = message;
+}
+
+// --- Password Checker ---
+document.getElementById('checkPassword').addEventListener('click', async function () {
+  const password = document.getElementById('password').value;
+  const loading = document.getElementById('passwordLoading');
+  const result = document.getElementById('passwordStatus');
+
+  if (!password) {
+    showStatus('passwordStatus', '⚠ Please enter a password', 'warning');
+    addLog('⚠ No password entered.');
+    return;
+  }
+
+  loading.style.display = 'block';
+  result.innerHTML = '';
+  addLog('🔍 Checking password safety...');
+
+  try {
+    const response = await fetch('/api/check-password-complete/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: password })
+    });
+
+    const data = await response.json();
+    loading.style.display = 'none';
+
+    if (response.ok) {
+      const strength = data.strength.label;
+      const breached = data.breach.breached;
+      const count = data.breach.count;
+      const recommendation = data.recommendation || 'No recommendation provided.';
+
+      let msg = `<strong>Strength:</strong> ${strength}<br>`;
+      msg += `<strong>Breach:</strong> ${breached ? `YES (${count} times)` : 'No'}<br>`;
+      msg += `<strong>Advice:</strong> ${recommendation}`;
+
+      const type = (strength === 'Weak' || breached) ? 'danger' : 'safe';
+      showStatus('passwordStatus', msg, type);
+      addLog(` Password Check: ${strength}, Breached: ${breached}`);
+    } else {
+      showStatus('passwordStatus', ' Error: ' + (data.error || 'Server error'), 'danger');
+      addLog(` API Error: ${data.error || 'Unknown'}`);
+    }
+
+  } catch (err) {
+    loading.style.display = 'none';
+    showStatus('passwordStatus', ` Connection Error: ${err.message}`, 'danger');
+    addLog(` Network Error: ${err.message}`);
+  }
+});
+
+// --- URL Checker ---
+document.getElementById('checkUrl').addEventListener('click', async function () {
+  const url = document.getElementById('url').value;
+  const loading = document.getElementById('urlLoading');
+  const result = document.getElementById('urlStatus');
+
+  if (!url) {
+    showStatus('urlStatus', '⚠ Please enter a URL', 'warning');
+    addLog('⚠ No URL entered.');
+    return;
+  }
+
+  loading.style.display = 'block';
+  result.innerHTML = '';
+  addLog(` Checking URL: ${url}`);
+
+  try {
+    const response = await fetch('/api/check-url-safety/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: url })
+    });
+
+    const data = await response.json();
+    loading.style.display = 'none';
+
+    if (response.ok) {
+      if (data.safe) {
+        showStatus('urlStatus', '✅ This URL is SAFE.', 'safe');
+        addLog('✅ URL is SAFE.');
+      } else {
+        let threatMsg = ' URL is UNSAFE!<br>';
+        if (data.threats && data.threats.length) {
+          threatMsg += `<strong>Threats:</strong><br>`;
+          data.threats.forEach(t => {
+            threatMsg += `- ${t}<br>`;
+          });
+        }
+        showStatus('urlStatus', threatMsg, 'danger');
+        addLog(` URL is UNSAFE! Threats: ${data.threats?.join(', ')}`);
+      }
+    } else {
+      showStatus('urlStatus', ' API error: ' + (data.error || 'Unknown'), 'danger');
+      addLog(' API response error.');
+    }
+  } catch (err) {
+    loading.style.display = 'none';
+    showStatus('urlStatus', ` Connection Error: ${err.message}`, 'danger');
+    addLog(` Network Error: ${err.message}`);
+  }
+});
+
+// --- Enter key triggers ---
+document.getElementById('password').addEventListener('keypress', function (e) {
+  if (e.key === 'Enter') document.getElementById('checkPassword').click();
+});
+document.getElementById('url').addEventListener('keypress', function (e) {
+  if (e.key === 'Enter') document.getElementById('checkUrl').click();
+});
+
+addLog(' AI Security Scanner Ready...');
+
+</script>
+</body>
+</html>
+

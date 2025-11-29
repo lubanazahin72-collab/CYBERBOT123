@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CyberBot — Green Animated Logo</title>
+  <style>
+
+    :root {
+      --bg: #020203;
+      --neon: #00ff88;
+      --neon-2: #00d084;
+      --dark: #081013;
+      --muted: #7f8b8f;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(0,255,136,0.03), transparent 10%),
+        var(--bg);
+      font-family: "Orbitron", system-ui, Roboto, Arial;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #dfffee;
+    }
+
+    .wrap {
+      width: 560px;
+      max-width: 96vw;
+      padding: 26px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+      box-shadow: 0 12px 40px rgba(0,0,0,0.8);
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 18px;
+      align-items: center;
+      position: relative;
+    }
+
+    .wrap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background-image: linear-gradient(rgba(0,0,0,0.02) 50%, rgba(255,255,255,0.00) 50%);
+      background-size: 100% 6px;
+      mix-blend-mode: overlay;
+      pointer-events: none;
+      opacity: 0.6;
+      animation: scrollLines 12s linear infinite;
+    }
+
+    @keyframes scrollLines {
+      from { background-position-y: 0 }
+      to { background-position-y: 24px }
+    }
+
+    .svg-box {
+      width: 170px;
+      height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: visible;
+    }
+
+    svg {
+      width: 150px;
+      height: 150px;
+      overflow: visible;
+    }
+
+    .eye {
+      filter: drop-shadow(0 0 12px var(--neon)) drop-shadow(0 0 28px rgba(0,255,136,0.18));
+      animation: eyePulse 1.2s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    @keyframes eyePulse {
+      0% { transform: scale(1) }
+      50% { transform: scale(1.08) }
+      100% { transform: scale(1) }
+    }
+
+    .skull-group {
+      animation: floatSkull 6s ease-in-out infinite;
+      will-change: transform;
+    }
+
+    @keyframes floatSkull {
+      0% { transform: translateY(0) }
+      50% { transform: translateY(-3px) }
+      100% { transform: translateY(0) }
+    }
+
+    .glow-ring {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      top: -25px;
+      left: -25px;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(0,255,136,0.06), transparent 12%),
+        radial-gradient(circle at 70% 70%, rgba(0,200,132,0.03), transparent 18%);
+      filter: blur(18px);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+      animation: ringPulse 3.8s ease-in-out infinite;
+    }
+
+    @keyframes ringPulse {
+      0% { transform: scale(1); opacity: 0.9 }
+      50% { transform: scale(1.03); opacity: 1 }
+      100% { transform: scale(1); opacity: 0.9 }
+    }
+
+    .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 6px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 42px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--neon);
+      font-weight: 800;
+      line-height: 0.95;
+      text-shadow:
+        0 6px 28px rgba(0,255,136,0.07),
+        0 0 18px rgba(0,255,136,0.12);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 .neon {
+      position: relative;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+      overflow: visible;
+    }
+
+    h1 .neon::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+      box-shadow:
+        0 0 28px rgba(0,255,136,0.18),
+        0 0 6px rgba(0,255,136,0.22);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+      animation: neonFlick 3s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes neonFlick {
+      0% { opacity: 0.95 }
+      20% { opacity: 0.7 }
+      23% { opacity: 1 }
+      50% { opacity: 0.85 }
+      100% { opacity: 0.95 }
+    }
+
+    .glitch-text {
+      position: relative;
+      display: inline-block;
+    }
+
+    .glitch-text::before,
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      clip-path: rect(0,9999px,0,0);
+      opacity: 0.8;
+    }
+
+    .glitch-text::before {
+      color: var(--neon-2);
+      transform: translate(2px, -1px);
+      mix-blend-mode: screen;
+      animation: g1 4.6s infinite linear;
+    }
+
+    .glitch-text::after {
+      color: rgba(0,255,136,0.55);
+      transform: translate(-2px, 1px);
+      mix-blend-mode: screen;
+      animation: g2 5.2s infinite linear;
+    }
+
+    @keyframes g1 {
+      0% { clip-path: inset(0 0 100% 0) }
+      10% { clip-path: inset(0 0 60% 0) }
+      11% { clip-path: inset(20% 0 55% 0) }
+      30% { clip-path: inset(0 0 0 0) }
+      100% { clip-path: inset(0 0 100% 0) }
+    }
+
+    @keyframes g2 {
+      0% { clip-path: inset(100% 0 0 0) }
+      15% { clip-path: inset(60% 0 0 0) }
+      16% { clip-path: inset(55% 0 20% 0) }
+      35% { clip-path: inset(0 0 0 0) }
+      100% { clip-path: inset(100% 0 0 0) }
+    }
+
+    .note {
+      font-size: 12px;
+      color: #9fbfaf;
+      margin-top: 8px;
+    }
+
+    #terminal {
+      font-family: monospace;
+      font-size: 15px;
+      color: #00ff88;
+      white-space: pre-wrap;
+      background-color: #010401;
+      padding: 20px;
+      border-radius: 8px;
+      display: none;
+      max-width: 540px;
+      width: 90vw;
+      box-shadow: 0 0 20px rgba(0,255,136,0.12);
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 16px;
+      background-color: #00ff88;
+      margin-left: 4px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1 }
+      50% { opacity: 0 }
+    }
+
+    @media (max-width: 460px) {
+      .wrap {
+        grid-template-columns: 120px 1fr;
+        padding: 16px;
+      }
+      h1 {
+        font-size: 26px;
+      }
+      svg {
+        width: 110px;
+        height: 110px;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="wrap" role="img" aria-label="CyberBot green animated logo">
+    <div class="svg-box">
+      <div class="glow-ring" aria-hidden="true"></div>
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" id="logo-svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="mg" x1="0" x2="1">
+            <stop offset="0" stop-color="#0d1a13"/>
+            <stop offset="1" stop-color="#050608"/>
+          </linearGradient>
+          <linearGradient id="eyeG" x1="0" x2="1">
+            <stop offset="0" stop-color="#9effc8"/>
+            <stop offset="1" stop-color="#00d084"/>
+          </linearGradient>
+        </defs>
+
+
+        <g transform="translate(6,6)" opacity="0.9">
+          <rect x="0" y="0" width="188" height="188" rx="10" fill="transparent"/>
+          <g stroke="#002118" stroke-width="1" fill="none" opacity="0.9">
+            <path d="M20 28 h34 M22 40 h30 M150 30 h22"/>
+            <path d="M40 20 v28 M160 20 v28 M60 140 h60"/>
+          </g>
+        </g>
+
+
+        <g class="skull-group" transform="translate(18,10) scale(0.95)">
+          <path d="M100 8 C130 8 162 26 170 54 C178 82 158 110 128 116 C120 118 114 122 100 122 C86 122 80 118 72 116 C42 110 22 82 30 54 C38 26 70 8 100 8 Z"
+                fill="url(#mg)" stroke="#081013" stroke-width="2"/>
+          <rect x="84" y="100" width="32" height="6" rx="2" fill="#050607" />
+
+          <g transform="translate(50,56)">
+            <path d="M0 0 C14 -10 46 -10 60 0 C46 12 14 12 0 0 Z" fill="#07100b" />
+            <ellipse cx="30" cy="4" rx="12" ry="7" fill="#000" />
+            <g class="eye">
+              <ellipse cx="30" cy="4" rx="9" ry="4.6" fill="url(#eyeG)"/>
+              <rect x="27" y="2.2" width="6" height="3.5" rx="1.2" fill="#052217" opacity="0.95"/>
+            </g>
+          </g>
+          <g transform="translate(90,56)">
+            <path d="M0 0 C14 -10 46 -10 60 0 C46 12 14 12 0 0 Z" fill="#07100b" />
+            <ellipse cx="30" cy="4" rx="12" ry="7" fill="#000" />
+            <g class="eye">
+              <ellipse cx="30" cy="4" rx="9" ry="4.6" fill="url(#eyeG)"/>
+              <rect x="27" y="2.2" width="6" height="3.5" rx="1.2" fill="#052217" opacity="0.95"/>
+            </g>
+          </g>
+        </g>
+
+        <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(0,255,136,0.03)" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <div class="meta">
+      <h1><span class="neon glitch-text" data-text="CyberBot">CyberBot</span></h1>
+    </div>
+  </div>
+
+ <div id="terminal"></div>
+
+<script>
+  const text = [
+    "Initializing CyberBot...",
+    "Loading modules...",
+    "Access granted.",
+    "Welcome to cyberBoT : Your cyber Assistant."
+  ];
+
+  const terminal = document.getElementById('terminal');
+
+
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  terminal.appendChild(cursor);
+
+  setTimeout(() => {
+    terminal.style.display = 'block';
+  }, 200);
+
+  // Function to add each line and move the cursor
+  text.forEach((line, index) => {
+    setTimeout(() => {
+      const p = document.createElement('p');
+      p.textContent = line;
+
+
+      terminal.insertBefore(p, cursor);
+    }, index * 2000);
+  });
+
+
+</script>
+<script>
+    setTimeout(() => {
+      window.location.href = "cyber.html";
+    }, 5000);
+  </script>
