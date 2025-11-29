@@ -10,7 +10,7 @@ print("Model loaded successfully!")
 
 def predict_image(image_path):
     # Function-এর ভিতরের সব কোড indent করতে হবে
-    img = load_img(image_path, target_size=(128,128))
+    img = load_img(image_path, target_size=(600,600))
     img_array = img_to_array(img) / 255.0
     img_array = np.expand_dims(img_array, 0)
     prediction = model.predict(img_array, verbose=0)[0][0]

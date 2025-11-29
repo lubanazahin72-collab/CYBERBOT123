@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CYBERBOTDJANGO2
 
 Futuristic cyber‑themed Django 5 project that demonstrates:
@@ -245,3 +246,17 @@ curl -X POST http://127.0.0.1:8000/api/check-url-safety/ \
 ### Enjoy exploring CyberBot ⚡
 
 If you run into any setup issue not covered here, open an issue or ask for help.
+=======
+---
+title: CYBERBOTDJANGO2
+emoji: 👀
+colorFrom: blue
+colorTo: gray
+sdk: gradio
+sdk_version: 6.0.1
+app_file: app.py
+pinned: false
+---
+
+Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+>>>>>>> d3e78c9855b27b4113ccbf65230f6013f03681ae

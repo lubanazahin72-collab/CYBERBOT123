@@ -7,13 +7,13 @@ test_dir = 'dataset/test'
 # Load dataset
 train_ds = tf.keras.utils.image_dataset_from_directory(
     train_dir,
-    image_size=(128, 128),  
+    image_size=(600, 600),  
     batch_size=32
 )
 
 test_ds = tf.keras.utils.image_dataset_from_directory(
    test_dir,
-    image_size=(128, 128),
+    image_size=(600, 600),
     batch_size=32
 )
 

@@ -1,10 +1,10 @@
 import tensorflow as tf
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
-    'dataset/train', image_size=(128,128), batch_size=32, label_mode='int', shuffle=True
+    'dataset/train', image_size=(600,600), batch_size=32, label_mode='int', shuffle=True
 )
 test_ds = tf.keras.utils.image_dataset_from_directory(
-    'dataset/test', image_size=(128,128), batch_size=32, label_mode='int', shuffle=False
+    'dataset/test', image_size=(2712,2700), batch_size=32, label_mode='int', shuffle=False
 )
 
 # Normalize

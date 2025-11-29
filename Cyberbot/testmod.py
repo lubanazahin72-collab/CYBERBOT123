@@ -8,7 +8,7 @@ print("Model loaded!")
 
 
 img_path = "dataset/test/fake/fake1.jpg"
-img = load_img(img_path, target_size=(128,128))
+img = load_img(img_path, target_size=(2712,2700))
 img_array = img_to_array(img) / 255.0
 img_array = np.expand_dims(img_array, axis=0)
 
@@ -17,3 +17,8 @@ prediction = model.predict(img_array)[0][0]
 label = "Real" if prediction >= 0.5 else "Fake"
 confidence = prediction if prediction >= 0.5 else 1 - prediction
 print(f"Prediction: {label}, Confidence: {confidence:.2f}")
+
+
+
+
+
