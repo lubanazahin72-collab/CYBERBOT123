@@ -13,11 +13,12 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', cast=bool)
 GOOGLE_SAFE_BROWSING_API_KEY = config('GOOGLE_SAFE_BROWSING_API_KEY')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost',  'theosophic-inconsonantly-michelle.ngrok-free.dev']
 
 # Installed apps
 INSTALLED_APPS = [
     'django.contrib.admin',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
