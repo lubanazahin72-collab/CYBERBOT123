@@ -1,0 +1,14 @@
+# Python virtual environment
+tf_env/
+venv/
+
+# Bytecode files
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Other unwanted files
+*.log
