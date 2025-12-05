@@ -13,7 +13,14 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', cast=bool)
 GOOGLE_SAFE_BROWSING_API_KEY = config('GOOGLE_SAFE_BROWSING_API_KEY')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost',  'theosophic-inconsonantly-michelle.ngrok-free.dev']
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "theosophic-inconsonantly-michelle.ngrok-free.dev",
+    "cyberbot123.onrender.com",
+    "cyberbot123-1.onrender.com"
+]
+
 
 # Installed apps
 INSTALLED_APPS = [
