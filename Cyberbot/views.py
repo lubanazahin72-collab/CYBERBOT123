@@ -15,31 +15,39 @@ from io import BytesIO
 from PIL import Image
 
 
-# -------- Load Model Once --------
-model = load_model("fake_real_model.h5")
 
 
-# -------- Prediction Function --------
+# ----- Lazy Load Model -----
+model = None
+def get_model():
+    global model
+    if model is None:
+        model = tf.keras.models.load_model("fake_real_model.h5")
+    return model
+
+# ----- Prediction Function -----
 def predict_image(image_file):
+    model = get_model()
 
+    # Read file
     image_file.seek(0)
-
-
     image_bytes = BytesIO(image_file.read())
 
-    img = load_img(image_bytes, target_size=(128, 128))
-    img = img.convert("RGB")
+    # Load PIL image
+    img = Image.open(image_bytes).convert("RGB")
+    img = img.resize((128,128))
 
-    img_array = img_to_array(img) / 255.0
+    img_array = np.array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
     pred = model.predict(img_array, verbose=0)[0]
-
     label_index = np.argmax(pred)
+
     label = "FAKE" if label_index == 0 else "REAL"
-    confidence = pred[label_index] * 100
+    confidence = float(pred[label_index] * 100)
 
     return label, round(confidence, 2)
+
 
 
 
