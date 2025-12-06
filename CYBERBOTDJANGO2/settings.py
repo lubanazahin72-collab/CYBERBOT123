@@ -1,27 +1,28 @@
 from pathlib import Path
 from decouple import config  # ✅ REQUIRED to use `config`
 import os
-import requests
 
+# ---------------------------
 # Base directories
+# ---------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
-# Templates live in Cyberbot/templates (where a subfolder Cyberbot/ contains the html files)
 TEMPLATE_DIR = BASE_DIR / 'Cyberbot' / 'templates'
 
+# ---------------------------
 # Load sensitive values from .env
+# ---------------------------
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = True 
+DEBUG = True  # Set False for production
 GOOGLE_SAFE_BROWSING_API_KEY = config('GOOGLE_SAFE_BROWSING_API_KEY')
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*"]  # You can restrict this in production
 
-
-
-
+# ---------------------------
 # Installed apps
+# ---------------------------
 INSTALLED_APPS = [
+    'corsheaders',  # ✅ must be at top
     'django.contrib.admin',
-
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -30,8 +31,11 @@ INSTALLED_APPS = [
     'Cyberbot',
 ]
 
+# ---------------------------
 # Middleware
+# ---------------------------
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # ✅ must be first
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -41,9 +45,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ---------------------------
+# URLs & Templates
+# ---------------------------
 ROOT_URLCONF = 'CYBERBOTDJANGO2.urls'
 
-# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -62,7 +68,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'CYBERBOTDJANGO2.wsgi.application'
 
+# ---------------------------
 # Database
+# ---------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -70,7 +78,9 @@ DATABASES = {
     }
 }
 
+# ---------------------------
 # Password validators
+# ---------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -78,32 +88,53 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# ---------------------------
 # Internationalization
+# ---------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Dhaka'
 USE_I18N = True
 USE_TZ = True
 
+# ---------------------------
 # Static files
+# ---------------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# ---------------------------
+# Media files
+# ---------------------------
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
-# Use custom user model
+# ---------------------------
+# Custom user model
+# ---------------------------
 AUTH_USER_MODEL = 'Cyberbot.CustomUser'
 
+# ---------------------------
 # External API URLs
+# ---------------------------
 HIBP_API_URL = 'https://api.pwnedpasswords.com/range/'
 SAFE_BROWSING_API_URL = 'https://safebrowsing.googleapis.com/v4/threatMatches:find'
 
+# ---------------------------
+# Default primary key field type
+# ---------------------------
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# ---------------------------
+# CORS Settings
+# ---------------------------
+# For testing: allow all origins
+CORS_ALLOW_ALL_ORIGINS = True
 
-
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media' 
-
+# For production: allow only specific frontend domains
+# CORS_ALLOWED_ORIGINS = [
+#     "http://127.0.0.1:8000",
+#     "https://yourfrontenddomain.com",
+# ]
