@@ -54,6 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("scanBtn").addEventListener("click", scanImage);
 });
 
+const PREDICT_API_URL = "https://cyberbot123-1.onrender.com/predict_api/";
+
+
 function scanImage() {
     const input = document.getElementById('imageInput');
     const file = input.files[0];
@@ -72,23 +75,23 @@ function scanImage() {
     const formData = new FormData();
     formData.append("image", file);
 
-    fetch("/predict_api/", {
+    fetch(PREDICT_API_URL, {
         method:"POST",
         body:formData
     })
     .then(async res=>{
-        let data=null;
-        try{ data = await res.json(); } catch(e){}
-
         if(!res.ok){
-            alert("Server Error: "+JSON.stringify(data));
-            console.log("SERVER RESPONSE:", data);
+            let errData = await res.text();
+            alert("Server Error: "+errData);
+            console.log("SERVER RESPONSE:", errData);
             document.getElementById("loading").style.display="none";
             return;
         }
 
+        const data = await res.json();
         document.getElementById("loading").style.display="none";
-        let box=document.getElementById("resultsBox");
+
+        let box = document.getElementById("resultsBox");
         box.style.display="block";
 
         document.getElementById("predLabel").innerText = data.label;

@@ -10,16 +10,12 @@ TEMPLATE_DIR = BASE_DIR / 'Cyberbot' / 'templates'
 
 # Load sensitive values from .env
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', cast=bool)
+DEBUG = True 
 GOOGLE_SAFE_BROWSING_API_KEY = config('GOOGLE_SAFE_BROWSING_API_KEY')
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "theosophic-inconsonantly-michelle.ngrok-free.dev",
-    "cyberbot123.onrender.com",
-    "cyberbot123-1.onrender.com"
-]
+ALLOWED_HOSTS = ["*"]
+
+
 
 
 # Installed apps
