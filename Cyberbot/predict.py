@@ -21,7 +21,7 @@ def predict_single_image(image):
     else:
         img = Image.open(image)
     
-    img = img.convert("RGB").resize((224, 224))  # adjust size as your model expects
+    img = img.convert("RGB").resize((128, 128))  # adjust size as your model expects
     img_array = np.array(img, dtype=np.float32) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
