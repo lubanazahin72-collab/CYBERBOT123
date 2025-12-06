@@ -1,39 +1,43 @@
-import tensorflow as tf
 import numpy as np
-import cv2
+from PIL import Image
+import tensorflow as tf
 
 # Load TFLite model
 interpreter = tf.lite.Interpreter(model_path="model.tflite")
 interpreter.allocate_tensors()
 
-# Get input details
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
-INPUT_HEIGHT = input_details[0]['shape'][1]
-INPUT_WIDTH = input_details[0]['shape'][2]
+# Class names
+CLASSES = ["FAKE", "REAL"]
 
-def predict_image(image_path):
-    img = cv2.imread(image_path)
+def predict_single_image(image):
+    """
+    image: file path (str) or Django UploadedFile
+    Returns: dict with label, confidence, and id
+    """
+    # Open image
+    if hasattr(image, 'read'):
+        img = Image.open(image)
+    else:
+        img = Image.open(image)
 
-    # Convert BGR → RGB
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # Resize to model input
+    img = img.convert("RGB").resize((224, 224))
+    img_array = np.array(img, dtype=np.float32) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
 
-    # Resize According to Model Required Size (128×128)
-    img = cv2.resize(img, (INPUT_WIDTH, INPUT_HEIGHT))
-
-    # Normalize 0–1
-    img = img.astype(np.float32) / 255.0
-
-    # Add batch dimension
-    img = np.expand_dims(img, axis=0)
-
-    interpreter.set_tensor(input_details[0]['index'], img)
+    # Predict
+    interpreter.set_tensor(input_details[0]['index'], img_array)
     interpreter.invoke()
-
     output_data = interpreter.get_tensor(output_details[0]['index'])
-    
-    return output_data
+
+    label_index = int(np.argmax(output_data))
+    label = CLASSES[label_index]
+    confidence = float(np.max(output_data) * 100)
+
+    return {"label": label, "confidence": confidence, "id": None}
 
     
 
