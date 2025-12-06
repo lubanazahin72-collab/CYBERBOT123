@@ -1,57 +1,39 @@
-import numpy as np
-from PIL import Image
 import tensorflow as tf
+import numpy as np
+import cv2
 
-# Load the TFLite model
+# Load TFLite model
 interpreter = tf.lite.Interpreter(model_path="model.tflite")
 interpreter.allocate_tensors()
 
-# Detect model input shape automatically
+# Get input details
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
-# Model expected dimensions
-MODEL_H = input_details[0]['shape'][1]
-MODEL_W = input_details[0]['shape'][2]
+INPUT_HEIGHT = input_details[0]['shape'][1]
+INPUT_WIDTH = input_details[0]['shape'][2]
 
-def predict_single_image(image):
-    """Predict any image of any size for correct model output"""
+def predict_image(image_path):
+    img = cv2.imread(image_path)
 
-    # Load image safely
-    if hasattr(image, 'read'):
-        img = Image.open(image)
-    else:
-        img = Image.open(image)
+    # Convert BGR → RGB
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    # Ensure RGB (for models trained on 3 channels)
-    img = img.convert("RGB")
+    # Resize According to Model Required Size (128×128)
+    img = cv2.resize(img, (INPUT_WIDTH, INPUT_HEIGHT))
 
-    # Resize to EXACT model-required size
-    img = img.resize((MODEL_W, MODEL_H))
-
-    # Convert to array
-    img_array = np.array(img, dtype=np.float32)
-
-    # Normalize (0–255 → 0–1) if model trained that way
-    img_array = img_array / 255.0
+    # Normalize 0–1
+    img = img.astype(np.float32) / 255.0
 
     # Add batch dimension
-    img_array = np.expand_dims(img_array, axis=0)
+    img = np.expand_dims(img, axis=0)
 
-    # Feed into model
-    interpreter.set_tensor(input_details[0]['index'], img_array)
+    interpreter.set_tensor(input_details[0]['index'], img)
     interpreter.invoke()
 
-    # Get output
-    output = interpreter.get_tensor(output_details[0]['index'])
+    output_data = interpreter.get_tensor(output_details[0]['index'])
+    
+    return output_data
 
-    # Predicted label + confidence
-    label = int(np.argmax(output))
-    confidence = float(np.max(output) * 100)
-
-    return {
-        "label": label,
-        "confidence": confidence,
-        "model_input_shape": f"{MODEL_W}x{MODEL_H}"
-    }
+    
 
