@@ -3,9 +3,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from .models import UploadedImage
+from .predict import predict_single_image
 import json
 import re
-from .predict import predict_single_image
 
 # -------- API Endpoint for Single Image --------
 @csrf_exempt
@@ -34,12 +34,14 @@ def predict_api(request):
     return JsonResponse({"error": "POST request required"}, status=400)
 
 
-# -------- Django Form Page --------
+# -------- Django Form Page with Image Upload --------
 def fake_real_image_view(request):
     result = None
     if request.method == 'POST' and request.FILES.get('image'):
         uploaded_file = request.FILES['image']
+        # Save uploaded image in DB
         uploaded_instance = UploadedImage.objects.create(image=uploaded_file)
+        # Make prediction
         pred = predict_single_image(uploaded_file)
         uploaded_instance.prediction = pred["label"]
         uploaded_instance.save()
@@ -50,6 +52,25 @@ def fake_real_image_view(request):
             'image_url': uploaded_instance.image.url
         }
     return render(request, 'Cyberbot/fakerealimage.html', {'result': result})
+
+
+# -------- Image Upload Function (Standalone for template) --------
+@csrf_exempt
+@require_POST
+def upload_image(request):
+    image_file = request.FILES.get("image")
+    if not image_file:
+        return JsonResponse({"error": "No image provided"}, status=400)
+    try:
+        uploaded_instance = UploadedImage.objects.create(image=image_file)
+        uploaded_instance.save()
+        return JsonResponse({
+            "message": "Image uploaded successfully",
+            "id": uploaded_instance.id,
+            "image_url": uploaded_instance.image.url
+        })
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 # -------- Password Strength Checker --------
@@ -158,4 +179,3 @@ def email_view(request): return render(request, 'Cyberbot/email.html')
 def verify_view(request): return render(request, 'Cyberbot/verify.html')
 def reset_password_view(request): return render(request, 'Cyberbot/reset_password.html')
 def api_index(request): return JsonResponse({"message": "API Working"})
-
