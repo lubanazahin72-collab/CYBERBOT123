@@ -23,8 +23,11 @@ def predict_single_image(image):
     else:
         img = Image.open(image)
 
-    # Resize to model input
-    img = img.convert("RGB").resize((224, 224))
+    # Resize dynamically to model input
+    input_shape = input_details[0]['shape'][1:3]  # height, width
+    img = img.convert("RGB").resize((input_shape[1], input_shape[0]))
+    
+    # Normalize
     img_array = np.array(img, dtype=np.float32) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
@@ -38,6 +41,3 @@ def predict_single_image(image):
     confidence = float(np.max(output_data) * 100)
 
     return {"label": label, "confidence": confidence, "id": None}
-
-    
-
