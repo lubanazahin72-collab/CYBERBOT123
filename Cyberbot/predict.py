@@ -41,3 +41,7 @@ def predict_single_image(image):
     confidence = float(np.max(output_data) * 100)
 
     return {"label": label, "confidence": confidence, "id": None}
+
+
+
+

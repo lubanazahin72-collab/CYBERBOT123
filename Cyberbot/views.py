@@ -133,7 +133,7 @@ def check_password_complete(request):
 @require_POST
 def check_url_safety(request):
     try:
-        payload = json.loads(request.body.decode('utf-8'))
+        payload = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
@@ -141,23 +141,37 @@ def check_url_safety(request):
     if not url:
         return JsonResponse({'error': 'URL required'}, status=400)
 
-    if not re.match(r'^https?://', url):
+    if not url.startswith(('http://', 'https://')):
         url = 'http://' + url
 
+    parsed = urlparse(url)
+    domain = parsed.netloc.lower()
     threats = []
-    lowered = url.lower()
-    suspicious_keywords = ['login-', 'update-account', 'verify', 'free-gift', 'banking-secure', 'steamcommunity-']
-    if any(k in lowered for k in suspicious_keywords):
-        threats.append('Suspicious keyword in URL')
-    if '@' in lowered:
-        threats.append('Contains @ symbol')
-    if re.search(r'//\d{1,3}(?:\.\d{1,3}){3}', lowered):
-        threats.append('Direct IP address')
-    if len(url) > 120:
-        threats.append('Unusually long URL')
 
-    return JsonResponse({'safe': len(threats) == 0, 'threats': threats})
+    # 1. Look-alike domain (numbers replacing letters)
+    if re.search(r'[0-9]', domain):
+        threats.append('Possible look-alike domain')
 
+    # 2. Too many hyphens
+    if domain.count('-') >= 3:
+        threats.append('Too many hyphens in domain')
+
+    # 3. Weird characters
+    if re.search(r'[%=&]', url):
+        threats.append('Suspicious special characters')
+
+    # 4. Too many subdomains
+    if domain.count('.') >= 4:
+        threats.append('Too many subdomains')
+
+    # 5. Very long domain
+    if len(domain) > 50:
+        threats.append('Unusually long domain')
+
+    return JsonResponse({
+        'safe': len(threats) == 0,
+        'threats': threats
+    })
 
 # -------- Train Model Endpoint (Stub) --------
 @csrf_exempt
