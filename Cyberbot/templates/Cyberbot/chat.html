@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Ana Bot</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Courier New',monospace}
+body{background:#0a0a0a;color:#00ff00;height:100vh;display:flex;justify-content:center;align-items:center}
+.chat-container{width:100%;max-width:900px;height:95vh;border:1px solid #00aa00;display:flex;flex-direction:column;background:rgba(0,20,0,0.4)}
+.header{padding:15px;text-align:center;border-bottom:1px solid #004400;text-shadow:0 0 8px #00ff00}
+.chat-box{flex:1;padding:15px;overflow-y:auto}
+.message{max-width:70%;padding:12px;margin-bottom:15px;border:1px solid #004400;line-height:1.5}
+.bot{background:rgba(0,40,0,0.6);border-left:4px solid #00ff00}
+.user{background:rgba(0,20,0,0.8);border-right:4px solid #00ff00;margin-left:auto;text-align:right}
+.input-area{border-top:1px solid #004400;padding:15px;display:flex;gap:10px}
+input{flex:1;background:#001100;color:#00ff00;border:1px solid #008800;padding:10px}
+button{padding:10px 20px;background:#003300;color:#00ff00;border:1px solid #00aa00;cursor:pointer}
+button:hover{background:#005500}
+.typing{opacity:0.7;font-style:italic}
+</style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="header"> CYBER ANA BOT — QnA System</div>
+
+    <div class="chat-box" id="chatBox">
+        <div class="message bot">
+            Hello <br>
+            I am <b>Cyber Qna Bot</b>.<br>
+         
+        </div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Ask something..." />
+        <button onclick="sendMessage()">SEND</button>
+    </div>
+</div>
+
+<script>
+const chatBox=document.getElementById("chatBox");
+const input=document.getElementById("userInput");
+
+function addMessage(text,type){
+    const div=document.createElement("div");
+    div.className="message "+type;
+    div.innerHTML=text;
+    chatBox.appendChild(div);
+    chatBox.scrollTop=chatBox.scrollHeight;
+}
+
+const msg = {
+  // Greetings
+  "hi": " Hello! Do you want to ask a cybersecurity question?",
+  "hello": " Hello! I'm Cyber Ana Bot, ask me anything about cybersecurity or tech.",
+  "hey": " Hi there! Cyber Ana Bot ready to answer your questions.",
+
+  // General Cybersecurity Knowledge
+  "what is cyberbot": " A Cyberbot is an AI-based chatbot that answers cybersecurity and tech-related questions.",
+
+  // Malware & Attacks
+  "what is malware": " Malware is malicious software designed to harm, steal data, or damage a computer system.",
+  "what is phishing": " Phishing is a cyber attack where fake emails or websites trick users into sharing sensitive information.",
+  "what is trojan": " A Trojan is a type of malware that looks like a normal program but secretly harms your system.",
+  "what is ddos": " A DDoS attack floods a server with traffic to make it unavailable.",
+
+  // Fake Image Detection
+  "detect fake image": " Fake image detection means identifying edited or AI-generated images using digital analysis tools.",
+  "what is fake image detection": "Fake image detection is the process of finding manipulated or AI-generated images.",
+
+  // Password Strength
+  "password strength": " Password strength shows how hard a password is to guess or crack.",
+  "what is password strength": " Password strength depends on length, complexity, and unpredictability.",
+  "strong password": " A strong password has uppercase, lowercase, numbers, symbols, and is at least 12 characters long.",
+
+  // Cybersecurity
+  "what is cybersecurity": " Cybersecurity is the practice of protecting systems, networks, and data from attacks.",
+  "explain the cia triad": " CIA triad stands for Confidentiality, Integrity, and Availability.",
+  "define the concept of defense-in-depth": " Defense-in-depth is using multiple layers of security to protect resources.",
+  "what is the principle of least privilege": " Grant users only the access they need to perform their tasks.",
+  "differentiate between symmetric and asymmetric encryption": " Symmetric encryption uses one key, asymmetric uses two keys (public/private).",
+  "what is a firewall, and how does it work": " A firewall filters network traffic to block unauthorized access.",
+  "explain the role of ids and ips": " IDS detects attacks, IPS prevents them in real-time.",
+  "define ddos attack": " A DDoS attack overwhelms a server with traffic to make it unavailable.",
+  "what is the difference between a virus and a worm": " A virus needs a host file; a worm spreads automatically.",
+  "explain the concept of zero-day vulnerability": " A zero-day is a flaw unknown to the public and exploitable by attackers.",
+  "what is a honey pot, and how is it used in cybersecurity": " A honeypot is a fake system designed to trap attackers.",
+
+  // Network Protocols and Technologies
+  "explain the security features of ssl/tls": " SSL/TLS encrypts data transmitted over networks.",
+  "what is the purpose of ipsec in network security": " IPsec secures IP communication through encryption and authentication.",
+  "how does dns contribute to network security": " DNS security prevents spoofing and phishing attacks.",
+  "describe the security considerations for snmp": " SNMP should be secured to prevent unauthorized access to network devices.",
+  "what are the risks associated with snmp version 1": " SNMPv1 sends data in plaintext, making it vulnerable.",
+  "differentiate between wep, wpa, and wpa2": " WEP is weak, WPA is better, WPA2 is strongest for Wi-Fi security.",
+  "how does port security enhance switch security": " Port security limits which devices can connect to a switch port.",
+  "what is the significance of vlans": " VLANs segment networks for security and traffic control.",
+  "explain the role of hids": " HIDS monitors host activity for suspicious behavior.",
+  "what is the importance of bgp security": " BGP security prevents route hijacking and ensures safe routing.",
+
+  // Network Security Interview Questions
+  "what is network security, and why is it important": " Network security protects data and devices from attacks and unauthorized access.",
+  "explain the concept of defense-in-depth in network security": " Multiple layers of defense to secure networks.",
+  "what is the difference between a firewall and an ids/ips": " Firewall blocks traffic, IDS/IPS detects and prevents attacks.",
+  "describe the purpose of vpn in network security": " VPN encrypts remote connections for secure access.",
+  "how does nat enhance security": " NAT hides internal IP addresses from external networks.",
+  "what is the principle of least privilege in network security": " Limit user access to only necessary resources.",
+  "explain the role of ssl/tls in securing network communications": " SSL/TLS encrypts traffic to prevent eavesdropping.",
+  "how does a ddos attack work, and how can it be mitigated": " DDoS floods servers with traffic; mitigation includes filtering and scaling.",
+  "differentiate between symmetric and asymmetric encryption in network security": "Symmetric uses 1 key, asymmetric uses public/private keys.",
+  "what is the dmz, and why is it used": " A DMZ isolates public-facing services from the internal network.",
+
+  // Cryptography
+  "define cryptography": " Cryptography is the practice of securing data using encryption.",
+  "explain the difference between hashing and encryption": " Hashing is one-way, encryption is reversible with a key.",
+  "what is a digital signature, and how does it provide authentication": " A digital signature verifies the authenticity and integrity of data.",
+  "describe the role of public and private keys in asymmetric encryption": " Public key encrypts, private key decrypts.",
+  "explain the concept of a certificate authority": " CA issues digital certificates to verify identity.",
+  "how does a rainbow table attack work": " Precomputed hashes are used to crack passwords.",
+  "what is a salt in the context of password storage": " Salt adds randomness to passwords to prevent hash attacks.",
+
+  // Application Security
+  "what is sql injection, and how can it be prevented": " Validate and sanitize user inputs to prevent SQL injection.",
+  "explain cross-site scripting (xss) attacks": " XSS injects malicious scripts into web pages.",
+  "define cross-site request forgery (csrf) attacks": " CSRF tricks users into performing unwanted actions.",
+  "how can session hijacking be prevented": " Use secure cookies, session expiration, and HTTPS.",
+  "what is the purpose of input validation in application security": " Ensures only valid data is processed.",
+  "describe the concept of secure coding practices": " Writing code that minimizes vulnerabilities.",
+  "explain the difference between black-box and white-box testing": "Black-box tests without source code, white-box tests with source code.",
+
+  // Operating System Security
+  "how does selinux enhance linux security": " SELinux enforces mandatory access controls on Linux systems.",
+  "what is the role of windows bitlocker in os security": " BitLocker encrypts drives to protect data.",
+  "define privilege escalation and how it can be prevented": " Attackers gain higher access; prevent with proper permissions.",
+  "explain the concept of sandboxing in operating systems": " Sandbox runs apps in isolated environments.",
+  "what is the significance of secure boot in os security": " Ensures only trusted OS loads at boot.",
+  "describe the purpose of antivirus software in an operating system": " Detects and removes malware.",
+
+  // Web Security
+  "what is the owasp top ten list, and why is it important": " Lists the top 10 web security risks.",
+  "explain the same-origin policy in web security": " Restricts scripts from interacting with different domains.",
+  "how does https provide a secure connection": " Encrypts data between browser and server.",
+  "define content security policy (csp) and its role in web security": " CSP prevents cross-site scripting attacks.",
+  "what are the security implications of using cookies": " Cookies can leak sensitive data if not secure.",
+
+  // Mobile Security
+  "describe the security challenges in mobile app development": " Apps can leak data, require secure coding.",
+  "how does mobile device management (mdm) enhance mobile security": " Controls devices, enforces security policies.",
+  "explain the concept of app sandboxing in mobile security": " Isolates apps to prevent data leaks.",
+  "what are the risks associated with jailbreaking or rooting a mobile device": " Bypasses security, making devices vulnerable.",
+  "how can biometrics enhance mobile device security": " Adds secure authentication using fingerprints or face recognition.",
+
+  // Cloud Security
+  "what is the shared responsibility model in cloud security": " Provider secures infrastructure; user secures data and apps.",
+  "explain the concept of cloud encryption": " Encrypts data stored or transmitted in the cloud.",
+  "how does multi-factor authentication (mfa) improve cloud security": "Requires multiple proofs of identity.",
+  "describe the importance of cloud access security brokers (casbs)": " CASBs enforce cloud security policies.",
+  "what is the principle of cloud least privilege": " Users have minimal access needed in cloud systems.",
+
+  // Ethical Hacking
+  "define ethical hacking and its importance in cybersecurity": "🕵️‍♂️ Legal hacking to find and fix vulnerabilities.",
+  "what is penetration testing, and how is it conducted": "🔍 Simulated attacks to find security weaknesses.",
+  "explain the difference between vulnerability scanning and penetration testing": "Scanning finds issues; penetration testing exploits them to evaluate risk.",
+  "describe the steps involved in a typical penetration testing engagement": "🛡️ Planning → Recon → Exploitation → Reporting.",
+  "what is the importance of responsible disclosure in ethical hacking": "✅ Reporting vulnerabilities safely to the organization.",
+
+  // Networking Protocols
+  "explain the security features of ssl/tls protocols": " Encrypts data, authenticates servers, ensures integrity.",
+  "what is the purpose of ipsec in network security": " Secure IP communication via encryption and authentication.",
+  "how does snmp impact security": " SNMP misconfigurations can expose sensitive device info.",
+  "describe the security considerations for the dns protocol": " Use DNSSEC to prevent spoofing and hijacking attacks."
+};
+
+function cyberBotReply(inputText){
+    const clean=inputText.toLowerCase().trim();
+    if(msg[clean]) return msg[clean];
+    return "Sorry 🤖, I don't have an answer for that yet. Try asking differently.";
+}
+
+function sendMessage(){
+    const text=input.value.trim();
+    if(!text) return;
+
+    addMessage(text,"user");
+    input.value="";
+
+    const typingDiv=document.createElement("div");
+    typingDiv.className="message bot typing";
+    typingDiv.innerText="Cyber Ana Bot is typing...";
+    chatBox.appendChild(typingDiv);
+    chatBox.scrollTop=chatBox.scrollHeight;
+
+    setTimeout(()=>{
+        typingDiv.remove();
+        const reply=cyberBotReply(text);
+        addMessage(reply,"bot");
+    },800);
+}
+
+input.addEventListener("keydown",e=>{
+    if(e.key==="Enter") sendMessage();
+});
+</script>
+
+</body>
+</html>

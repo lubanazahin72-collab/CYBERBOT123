@@ -19,22 +19,31 @@ urlpatterns = [
     path('cyber/login/email/', views.email_view, name='email'),
     path('cyber/login/verify/', views.verify_view, name='verify'),
 
-    # Reset password
+    # Reset password page
     path('reset-password/', views.reset_password_view, name='reset_password'),
+
+
+
+
 
     # Cyberbot section
     path('cyber.html/cyberbot.html', views.cyberbot, name='cyberbot'),
     path('cyber.html/chatbot.html', views.chatbot, name='chatbot'),
 
     # Image Fake/Real checker
-    path('cyber/fakerealimage/', views.my_view, name='fakerealimage'),
+    path('cyber/fakerealimage/', views.fake_real_image_view, name='fakerealimage'),
+
+    # Chat section
+    path('cyber.html/chat.html', views.chat_page, name='chat_page'),
 
     # API section
     path('api/', views.api_index, name='api_index'),
     path('api/check-password-complete/', views.check_password_complete, name='check_password_complete'),
     path('api/check-url-safety/', views.check_url_safety, name='check_url_safety'),
     path('predict_api/', views.predict_api, name='predict_api'),
+    
 
     # Train model endpoint
     path('train/', train_model, name='train_model'),
 ]
+

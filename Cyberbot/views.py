@@ -5,43 +5,46 @@ from django.views.decorators.http import require_POST
 from .models import UploadedImage
 from .predict import predict_single_image
 import json
+import openai
 import re
+from urllib.parse import urlparse
 
-# -------- API Endpoint for Single Image --------
+# ---------------- Chatbot API ----------------
+def chat_page(request):
+    return render(request, "Cyberbot/chat.html")  # your chat template
+
+
+
+
+
+
+# ---------------- Image Prediction ----------------
 @csrf_exempt
+@require_POST
 def predict_api(request):
-    if request.method == "POST":
-        image_file = request.FILES.get("image")
-        if not image_file:
-            return JsonResponse({"error": "No image provided"}, status=400)
-        try:
-            # Save uploaded image
-            uploaded_instance = UploadedImage.objects.create(image=image_file)
-            # Predict
-            result = predict_single_image(image_file)
-            # Save prediction
-            uploaded_instance.prediction = result["label"]
-            uploaded_instance.save()
-            # Return result with proper ID
-            result["id"] = uploaded_instance.id
-            return JsonResponse({
-                "label": result["label"],
-                "confidence": f"{result['confidence']:.2f}%",
-                "id": result["id"]
-            })
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-    return JsonResponse({"error": "POST request required"}, status=400)
+    image_file = request.FILES.get("image")
+    if not image_file:
+        return JsonResponse({"error": "No image provided"}, status=400)
+    try:
+        uploaded_instance = UploadedImage.objects.create(image=image_file)
+        result = predict_single_image(image_file)
+        uploaded_instance.prediction = result["label"]
+        uploaded_instance.save()
+        result["id"] = uploaded_instance.id
+        return JsonResponse({
+            "label": result["label"],
+            "confidence": f"{result['confidence']:.2f}%",
+            "id": uploaded_instance.id
+        })
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
-# -------- Django Form Page with Image Upload --------
 def fake_real_image_view(request):
     result = None
     if request.method == 'POST' and request.FILES.get('image'):
         uploaded_file = request.FILES['image']
-        # Save uploaded image in DB
         uploaded_instance = UploadedImage.objects.create(image=uploaded_file)
-        # Make prediction
         pred = predict_single_image(uploaded_file)
         uploaded_instance.prediction = pred["label"]
         uploaded_instance.save()
@@ -54,7 +57,7 @@ def fake_real_image_view(request):
     return render(request, 'Cyberbot/fakerealimage.html', {'result': result})
 
 
-# -------- Image Upload Function (Standalone for template) --------
+# ---------------- Image Upload ----------------
 @csrf_exempt
 @require_POST
 def upload_image(request):
@@ -73,7 +76,7 @@ def upload_image(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-# -------- Password Strength Checker --------
+# ---------------- Password Strength ----------------
 def _password_strength(password: str):
     rules = {
         'length>=12': len(password) >= 12,
@@ -128,52 +131,43 @@ def check_password_complete(request):
     })
 
 
-# -------- URL Safety Checker --------
+# ---------------- URL Safety ----------------
 @csrf_exempt
 @require_POST
 def check_url_safety(request):
     try:
-        payload = json.loads(request.body)
+        payload = json.loads(request.body.decode('utf-8'))
+        url = (payload.get('url') or '').strip()
+        if not url:
+            return JsonResponse({'error': 'URL required'}, status=400)
+
+        if not url.startswith(('http://', 'https://')):
+            url = 'http://' + url
+
+        parsed = urlparse(url)
+        domain = parsed.netloc.lower()
+        threats = []
+
+        if re.search(r'[0-9]', domain):
+            threats.append('Possible look-alike domain')
+        if domain.count('-') >= 3:
+            threats.append('Too many hyphens in domain')
+        if re.search(r'[%=&]', url):
+            threats.append('Suspicious special characters')
+        if domain.count('.') >= 4:
+            threats.append('Too many subdomains')
+        if len(domain) > 50:
+            threats.append('Unusually long domain')
+
+        return JsonResponse({'safe': len(threats) == 0, 'threats': threats})
+
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
-    url = (payload.get('url') or '').strip()
-    if not url:
-        return JsonResponse({'error': 'URL required'}, status=400)
 
-    if not url.startswith(('http://', 'https://')):
-        url = 'http://' + url
-
-    parsed = urlparse(url)
-    domain = parsed.netloc.lower()
-    threats = []
-
-    # 1. Look-alike domain (numbers replacing letters)
-    if re.search(r'[0-9]', domain):
-        threats.append('Possible look-alike domain')
-
-    # 2. Too many hyphens
-    if domain.count('-') >= 3:
-        threats.append('Too many hyphens in domain')
-
-    # 3. Weird characters
-    if re.search(r'[%=&]', url):
-        threats.append('Suspicious special characters')
-
-    # 4. Too many subdomains
-    if domain.count('.') >= 4:
-        threats.append('Too many subdomains')
-
-    # 5. Very long domain
-    if len(domain) > 50:
-        threats.append('Unusually long domain')
-
-    return JsonResponse({
-        'safe': len(threats) == 0,
-        'threats': threats
-    })
-
-# -------- Train Model Endpoint (Stub) --------
+# ---------------- Train Model Stub ----------------
 @csrf_exempt
 def train_model(request):
     if request.method == "POST":
@@ -181,7 +175,7 @@ def train_model(request):
     return JsonResponse({"status": "error", "message": "POST request required"})
 
 
-# -------- Simple Views --------
+# ---------------- Simple Static Pages ----------------
 def hello_world(request): return render(request, 'Cyberbot/hello.html')
 def home(request): return render(request, 'Cyberbot/homepage.html')
 def cyber(request): return render(request, 'Cyberbot/cyber.html')
@@ -191,5 +185,12 @@ def chatbot(request): return render(request, 'Cyberbot/chatbot.html')
 def my_view(request): return render(request, 'Cyberbot/fakerealimage.html')
 def email_view(request): return render(request, 'Cyberbot/email.html')
 def verify_view(request): return render(request, 'Cyberbot/verify.html')
-def reset_password_view(request): return render(request, 'Cyberbot/reset_password.html')
-def api_index(request): return JsonResponse({"message": "API Working"})
+
+# ---------------- Reset Password View ----------------
+def reset_password_view(request): 
+    return render(request, 'Cyberbot/reset_password.html')
+def api_index(request):
+    """
+    Simple API landing page
+    """
+    return JsonResponse({"message": "Welcome to the Cyberbot API"})
