@@ -2,10 +2,12 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from urllib.parse import urlparse
+
 from .models import UploadedImage
 from .predict import predict_single_image
 import json
-import openai
+
 import re
 from urllib.parse import urlparse
 
