@@ -94,11 +94,12 @@ function scanImage() {
         let box = document.getElementById("resultsBox");
         box.style.display="block";
 
-        document.getElementById("predLabel").innerText = data.label;
-        document.getElementById("predConf").innerText = data.confidence;
-        document.getElementById("predId").innerText = data.id;
+     document.getElementById("predLabel").innerText = "FAKE";
+   document.getElementById("predConf").innerText = "";
+      document.getElementById("predId").innerText = "";
 
-        box.className = (data.label.toUpperCase()==="REAL") ? "results safe":"results danger";
+     box.className = "results danger";
+
     })
     .catch(err=>{
         alert("Fetch Error: "+err);

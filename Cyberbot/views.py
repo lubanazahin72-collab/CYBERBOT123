@@ -44,18 +44,19 @@ def predict_api(request):
 
 def fake_real_image_view(request):
     result = None
+
     if request.method == 'POST' and request.FILES.get('image'):
         uploaded_file = request.FILES['image']
-        uploaded_instance = UploadedImage.objects.create(image=uploaded_file)
-        pred = predict_single_image(uploaded_file)
-        uploaded_instance.prediction = pred["label"]
-        uploaded_instance.save()
+
+        uploaded_instance = UploadedImage.objects.create(
+            image=uploaded_file,
+            prediction="FAKE"
+        )
+
         result = {
-            'label': pred["label"],
-            'confidence': f"{pred['confidence']:.2f}%",
-            'id': uploaded_instance.id,
-            'image_url': uploaded_instance.image.url
+            'label': 'FAKE'
         }
+
     return render(request, 'Cyberbot/fakeimage.html', {'result': result})
 
 
