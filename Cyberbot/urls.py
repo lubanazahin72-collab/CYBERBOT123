@@ -31,7 +31,7 @@ urlpatterns = [
     path('cyber.html/chatbot.html', views.chatbot, name='chatbot'),
 
     # Image Fake/Real checker
-    path('cyber/fakerealimage/', views.fake_real_image_view, name='fakerealimage'),
+    path('cyber/fakeimage/', views.fake_real_image_view, name='fakerealimage'),
 
     # Chat section
     path('cyber.html/chat.html', views.chat_page, name='chat_page'),

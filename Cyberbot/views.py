@@ -56,7 +56,7 @@ def fake_real_image_view(request):
             'id': uploaded_instance.id,
             'image_url': uploaded_instance.image.url
         }
-    return render(request, 'Cyberbot/fakerealimage.html', {'result': result})
+    return render(request, 'Cyberbot/fakeimage.html', {'result': result})
 
 
 # ---------------- Image Upload ----------------
